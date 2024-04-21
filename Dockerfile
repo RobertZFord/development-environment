@@ -3,9 +3,12 @@
 # enter it with `toolbox enter dev-box`
 # run things from it with `toolbox run --container dev-box code`
 
+ARG RUST_VERSION=1.77.1
+
 # download the rust installer
 FROM registry.fedoraproject.org/fedora-toolbox:39 AS temp
-RUN curl https://static.rust-lang.org/dist/rust-1.77.1-x86_64-unknown-linux-gnu.tar.gz | zcat | tar --extract --strip-components=1 --directory=/tmp
+ARG RUST_VERSION
+RUN curl https://static.rust-lang.org/dist/rust-${RUST_VERSION}-x86_64-unknown-linux-gnu.tar.gz | zcat | tar --extract --strip-components=1 --directory=/tmp
 
 # start from the default fedora toolbox
 FROM registry.fedoraproject.org/fedora-toolbox:39
