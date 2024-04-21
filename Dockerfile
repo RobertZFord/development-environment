@@ -51,5 +51,8 @@ RUN npm install --global pnpm
 # (this is basically what `pnpm setup` adds to the bashrc file)
 
 RUN SHELL=sh ENV=$HOME/.bashrc pnpm setup
+# javascript/typescript
 RUN PATH=$PNPM_HOME:$PATH pnpm add --global typescript vite esbuild
+# css
+RUN PATH=$PNPM_HOME:$PATH pnpm add --global postcss-cli sass less
 RUN chown -R $USER $PNPM_HOME
