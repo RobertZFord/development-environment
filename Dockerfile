@@ -26,16 +26,27 @@ RUN --mount=type=bind,from=temp,source=/tmp,target=/rust-install /rust-install/r
 RUN dnf --assumeyes install gcc
 # `cc` is now available for `cargo build`
 
-#ENV PNPM_HOME=/usr/local/share/pnpm
 ## Typescript
 RUN dnf --assumeyes install nodejs
-#RUN npm install --global typescript
-#RUN npm install --global pnpm
-#RUN npm install --global vite
-RUN npm install --global typescript pnpm vite esbuild
-## `tsc` and `node` should be accessible
 
-#RUN npm install -g pnpm
-#RUN SHELL=sh ENV=$HOME/.bashrc pnpm setup
-#RUN PATH=$PNPM_HOME:$PATH      pnpm add -g typescript
-#RUN PATH=$PNPM_HOME:$PATH      pnpm add -g vite
+# the usual uid:gid
+ARG USER="1000:1000"
+# this will *not* override existing environment variables
+ENV PNPM_HOME=/usr/local/lib/pnpm
+
+RUN npm install --global pnpm
+# this writes to /root/.bashrc, which doesn't fire when the user logs in
+# however, if we put:
+#
+#   case ":$PATH:" in
+#     *":$PNPM_HOME:"*) ;;
+#     *) export PATH="$PNPM_HOME:$PATH" ;;
+#   esac
+#
+# at the end of the user's .bashrc, it adds the above environment variable to
+# the path on toolbox startup
+# (this is basically what `pnpm setup` adds to the bashrc file)
+
+RUN SHELL=sh ENV=$HOME/.bashrc pnpm setup
+RUN PATH=$PNPM_HOME:$PATH pnpm add --global typescript vite esbuild
+RUN chown -R $USER $PNPM_HOME
