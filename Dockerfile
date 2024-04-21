@@ -5,7 +5,7 @@
 
 # download the rust installer
 FROM registry.fedoraproject.org/fedora-toolbox:39 AS temp
-RUN curl https://static.rust-lang.org/dist/rust-1.77.1-x86_64-unknown-linux-gnu.tar.gz | zcat | tar --extract --directory=/tmp
+RUN curl https://static.rust-lang.org/dist/rust-1.77.1-x86_64-unknown-linux-gnu.tar.gz | zcat | tar --extract --strip-components=1 --directory=/tmp
 
 # start from the default fedora toolbox
 FROM registry.fedoraproject.org/fedora-toolbox:39
@@ -21,7 +21,7 @@ RUN dnf --assumeyes install code dotnet-sdk-6.0 dotnet-sdk-8.0
 
 ## Rust
 # install rust from the standalone installer
-RUN --mount=type=bind,from=temp,source=/tmp,target=/rust-install /rust-install/rust-1.77.1-x86_64-unknown-linux-gnu/install.sh
+RUN --mount=type=bind,from=temp,source=/tmp,target=/rust-install /rust-install/install.sh
 # `rustc` and `cargo` et al should be accessible
 RUN dnf --assumeyes install gcc
 # `cc` is now available for `cargo build`
